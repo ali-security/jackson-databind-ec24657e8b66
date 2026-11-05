@@ -116,6 +116,30 @@ public class IllegalTypesCheckTest extends BaseMapTest
         _testIllegalType(ComboPooledDataSource.class); // [databind#1931]
     }
 
+    // // // Tests for [databind#2097]: one test per blocked type, since
+    //   verification short-circuits on the first illegal type encountered
+
+    public void testSlf4jTypes2097() throws Exception
+    {
+        _testIllegalType(org.slf4j.ext.EventData.class);
+    }
+
+    public void testFlexTypes2097() throws Exception
+    {
+        _testIllegalType(flex.messaging.util.concurrent.AsynchBeansWorkManagerExecutor.class);
+    }
+
+    public void testJDKTypes2097() throws Exception
+    {
+        // nominally JDK-bundled (deploy.jar), but not on build classpath
+        _testIllegalType(com.sun.deploy.security.ruleset.DRSHelper.class);
+    }
+
+    public void testAxis2Types2097() throws Exception
+    {
+        _testIllegalType(org.apache.axis2.jaxws.spi.handler.HandlerResolverImpl.class);
+    }
+
     private void _testIllegalType(Class<?> nasty) throws Exception {
         _testIllegalType(nasty.getName());
     }
