@@ -140,6 +140,42 @@ public class IllegalTypesCheckTest extends BaseMapTest
         _testIllegalType(org.apache.axis2.jaxws.spi.handler.HandlerResolverImpl.class);
     }
 
+    // // // Tests for [databind#2478]: commons-dbcp 1.x, p6spy; one test per
+    //   blocked type, since verification short-circuits on the first illegal
+    //   type encountered
+
+    public void testDBCPTypes2478_DriverAdapterCPDS() throws Exception
+    {
+        _testIllegalType(org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS.class);
+    }
+
+    public void testDBCPTypes2478_PerUserPoolDataSource() throws Exception
+    {
+        _testIllegalType(org.apache.commons.dbcp.datasources.PerUserPoolDataSource.class);
+    }
+
+    public void testDBCPTypes2478_SharedPoolDataSource() throws Exception
+    {
+        _testIllegalType(org.apache.commons.dbcp.datasources.SharedPoolDataSource.class);
+    }
+
+    public void testP6SpyTypes2478() throws Exception
+    {
+        _testIllegalType(com.p6spy.engine.spy.P6DataSource.class);
+    }
+
+    // // // Tests for [databind#2642]: javax.swing (JDK-bundled)
+
+    public void testJDKTypes2642_JEditorPane() throws Exception
+    {
+        _testIllegalType(javax.swing.JEditorPane.class);
+    }
+
+    public void testJDKTypes2642_JTextPane() throws Exception
+    {
+        _testIllegalType(javax.swing.JTextPane.class);
+    }
+
     private void _testIllegalType(Class<?> nasty) throws Exception {
         _testIllegalType(nasty.getName());
     }
