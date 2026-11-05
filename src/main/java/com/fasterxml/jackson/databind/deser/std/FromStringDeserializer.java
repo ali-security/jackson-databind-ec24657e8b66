@@ -287,16 +287,19 @@ public abstract class FromStringDeserializer<T> extends StdScalarDeserializer<T>
 
                     int j = value.indexOf(':', i);
                     int port = j > -1 ? Integer.parseInt(value.substring(j + 1)) : 0;
-                    return new InetSocketAddress(value.substring(0, i + 1), port);
+                    // [databind#5951] Prevent DNS lookup:
+                    return InetSocketAddress.createUnresolved(value.substring(0, i + 1), port);
                 }
                 int ix = value.indexOf(':');
                 if (ix >= 0 && value.indexOf(':', ix + 1) < 0) {
                     // host:port
                     int port = Integer.parseInt(value.substring(ix+1));
-                    return new InetSocketAddress(value.substring(0, ix), port);
+                    // [databind#5951] Prevent DNS lookup:
+                    return InetSocketAddress.createUnresolved(value.substring(0, ix), port);
                 }
                 // host or unbracketed IPv6, without port number
-                return new InetSocketAddress(value, 0);
+                // [databind#5951] Prevent DNS lookup:
+                return InetSocketAddress.createUnresolved(value, 0);
             case STD_STRING_BUILDER:
                 return new StringBuilder(value);
             }
