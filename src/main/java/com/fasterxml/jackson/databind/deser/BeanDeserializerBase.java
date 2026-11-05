@@ -1444,7 +1444,16 @@ public abstract class BeanDeserializerBase
             if (t == JsonToken.END_ARRAY && ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)) {
                 return null;
             }
+            if (p.currentToken() == JsonToken.START_ARRAY && ctxt.getObjectRecursionDepth() >= maxRecursionDepth) {
+                return handleNestedArrayForSingle(p, ctxt);
+            }
+            if (p.currentToken() == JsonToken.START_ARRAY){
+                ctxt.incObjectRecursionDepth();
+            } else {
+                ctxt.resetObjectRecursionDepth();
+            }
             final Object value = deserialize(p, ctxt);
+            ctxt.resetObjectRecursionDepth();
             if (p.nextToken() != JsonToken.END_ARRAY) {
                 handleMissingEndArrayForSingle(p, ctxt);
             }
