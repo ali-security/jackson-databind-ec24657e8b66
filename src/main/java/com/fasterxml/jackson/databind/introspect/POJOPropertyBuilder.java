@@ -381,6 +381,19 @@ public class POJOPropertyBuilder
         return (_ctorParameters != null) || (_setters != null) || (_fields != null);
     }
 
+    /**
+     * Method similar to {@link #couldDeserialize()}, except that only visible
+     * fields are considered: non-visible fields may only be retained to allow
+     * "pulling in" mutators (see {@code MapperFeature.INFER_PROPERTY_MUTATORS})
+     * and must not alone make property deserializable when its other mutators
+     * have been explicitly ignored (see [databind#5967]).
+     */
+    public boolean couldDeserializeWithVisibleFields() {
+        return (_ctorParameters != null)
+            || (_setters != null)
+            || ((_fields != null) && _anyVisible(_fields));
+    }
+
     @Override
     public boolean couldSerialize() {
         return (_getters != null) || (_fields != null);
@@ -835,6 +848,13 @@ public class POJOPropertyBuilder
      */
     public void removeConstructors() {
         _ctorParameters = null;
+    }
+
+    /**
+     * Mutator that will simply drop any fields property may have.
+     */
+    public void removeFields() {
+        _fields = null;
     }
     
     /**
