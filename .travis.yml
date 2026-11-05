@@ -1,24 +1,19 @@
 language: java
 
 # Since Jackson 2.7, build requires jdk7, although module itself works on jdk6 still (for now)
-jdk:
-  - openjdk7
-  - openjdk8
+# Travis no longer provisions openjdk7: the JDK 7 leg installs Azul Zulu 7 on top of
+# the openjdk8 image (SEAL_JDK); both legs run Maven 3.8.8 (Travis's Maven 3.9 needs Java 8).
+jobs:
+  include:
+    - jdk: openjdk8
+      env: SEAL_JDK=zulu7.56.0.11-ca-jdk7.0.352-linux_x64
+    - jdk: openjdk8
 
-# Below this line is configuration for deploying to the Sonatype OSS repo
-# http://blog.xeiam.com/2013/05/configure-travis-ci-to-deploy-snapshots.html
-before_install: "git clone -b travis `git config --get remote.origin.url` target/travis"
-after_success:
-  - "mvn source:jar javadoc:jar deploy --settings target/travis/settings.xml"
-  - "mvn -B cobertura:cobertura coveralls:report"
-
-# whitelist
-branches:
-  only:
-    - master
-    - "2.9"
-
-env:
-  global:
-    - secure: "ZIFMeNzZCvLYWICiUyHFSm8Ypz6lYFbF/+LGz6a+Sh8B9tSnvYvlrE4gSFJj3NzRWY0RG/vizoyFEpVgxOnzXDMLuuy/dreupnHR1FfVmiaiceK4JHRwAzl0lQzr2hdVwJbqpX0GfrxKmbg8Jvv9WPKtfM6X4167ElVj4O/8IRc="
-    - secure: "VOC/J8eFbM2OeysBp0Gx0G73MySRATCoN7hc9Ok0kJXE/dbE/2KOoFlTwwxUgErwJXkjJKKXafYcbq/22S7wkaoDW5XAvplSu3skxdE0NRGVzozcDMXO5UoGlt9Ti4XIBMCvy7bB/NO+J5IgNedCtcNnBsrGZCdodW3DTYtqQLs="
+before_install:
+  - source .travis/seal-setup.sh
+install: true
+script:
+  - mvn -B -V -e -ntp test
+  - python3 .travis/surefire-summary.py
+after_script:
+  - bash .travis/wait-for-log.sh
