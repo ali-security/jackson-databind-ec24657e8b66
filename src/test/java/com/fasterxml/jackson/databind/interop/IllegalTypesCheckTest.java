@@ -176,6 +176,19 @@ public class IllegalTypesCheckTest extends BaseMapTest
         _testIllegalType(javax.swing.JTextPane.class);
     }
 
+    // // // Tests for [databind#2680]: spring-aop; one test per blocked type,
+    //   since verification short-circuits on the first illegal type encountered
+
+    public void testSpringTypes2680_MethodLocatingFactoryBean() throws Exception
+    {
+        _testIllegalType(org.springframework.aop.config.MethodLocatingFactoryBean.class);
+    }
+
+    public void testSpringTypes2680_BeanReferenceFactoryBean() throws Exception
+    {
+        _testIllegalType(org.springframework.beans.factory.config.BeanReferenceFactoryBean.class);
+    }
+
     private void _testIllegalType(Class<?> nasty) throws Exception {
         _testIllegalType(nasty.getName());
     }
